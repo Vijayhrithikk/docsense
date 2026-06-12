@@ -1,0 +1,12 @@
+[project]
+name = "docsense"
+version = "0.1.0"
+description = "A RAG System"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "psycopg2>=2.9.12",
+    "pydantic-settings>=2.14.1",
+    "python-multipart>=0.0.32",
+    "sqlalchemy>=2.0.50",
+]
