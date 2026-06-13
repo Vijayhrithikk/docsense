@@ -3,6 +3,7 @@ from app.db.database import Base
 
 from app.models.document_model import Document
 from app.models.tenant_model import Tenant
+from app.models.document_page_model import DocumentPage
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

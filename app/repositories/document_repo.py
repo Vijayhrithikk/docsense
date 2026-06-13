@@ -17,3 +17,18 @@ def create_document(db: Session, tenant_id: int, title: str, filepath: str) -> D
     db.refresh(document)
 
     return document
+
+def get_document(db: Session, document_id: int):
+
+    return db.query(Document).filter(Document.id==document_id).first()
+
+def update_document_status(db: Session, document_id: int, status: str):
+
+    db.query(Document).filter(Document.id==document_id).update({"status":status})
+
+    db.commit()
+
+def update_document_error(db: Session, document_id : int, error_message: str):
+
+    db.query(Document).filter(Document.id==document_id).update({"error_message": error_message})
+    db.commit()
