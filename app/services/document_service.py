@@ -19,6 +19,13 @@ from app.repositories.document_page_repo import bulk_create_pages
 
 from app.processors.processor_factory import get_processor
 
+from app.services.chunk_service import generate_chunks
+from app.repositories.chunk_repo import bulk_create_chunks
+
+from app.services.embedding_service import EmbeddingService
+
+embed_service= EmbeddingService()
+
 
 def upload_document(db: Session, tenant_id: int, title: str, file: UploadFile):
 
@@ -57,8 +64,16 @@ def process_document(document_id: int):
 
         if not pages:
             raise ValueError("No text extracted")
+        
+        chunks = generate_chunks(pages=pages)
+
+        records = bulk_create_chunks(db=db, document_id=document_id, chunks=chunks)
 
         bulk_create_pages(db=db,document_id=document_id,pages=pages)
+
+        #temporary
+
+        embed_service.ensure_embedding_exist(db=db,chunks=chunks)
 
         update_document_status(db=db,document_id=document_id,status="indexed")
 

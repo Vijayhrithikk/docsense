@@ -4,6 +4,8 @@ from app.db.database import Base
 from app.models.document_model import Document
 from app.models.tenant_model import Tenant
 from app.models.document_page_model import DocumentPage
+from app.models.chunk_model import Chunk
+from app.models.chunk_embedding_model import ChunkEmbedding
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

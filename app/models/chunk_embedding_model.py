@@ -3,16 +3,20 @@ from sqlalchemy import (
     Integer,
     Column,
     ForeignKey,
-    Text
+    Text,
+    DateTime,
+    JSON
 )
+
+from datetime import datetime
 
 from sqlalchemy.orm import relationship
 
 from app.db.database import Base
 
-class Chunk(Base):
+class ChunkEmbedding(Base):
 
-    __tablename__ = "chunks"
+    __tablename__ = "chunk_embeddings"
 
     id = Column(
         Integer,
@@ -20,25 +24,25 @@ class Chunk(Base):
         index=True
     )
 
-    document_id = Column(
+    chunk_id = Column(
         Integer,
-        ForeignKey("documents.id"),
+        ForeignKey("chunks.id"),
         nullable=False,
     )
 
-    start_page = Column(
-        Integer,
-        nullable=False
-    )
-
-    end_page = Column(
-        Integer,
-        nullable=False
-    )
-
-    content = Column(
+    model_name = Column(
         Text,
         nullable=False
+    )
+
+    embedding = Column(
+        JSON,
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
     )
 
     
