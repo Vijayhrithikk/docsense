@@ -1,12 +1,25 @@
+from google import genai
+
+from app.core.config import settings
+
+
 class LLMService:
 
-    def generate(
-        self,
-        prompt: str,
-    ):
-        
-        return f"""
-PROMPT RECIEVED
+    MODEL_NAME = "gemini-2.5-flash"
 
-{prompt}
-"""
+    def __init__(self):
+
+        self.client = genai.Client(
+            api_key=settings.GEMINI_API_KEY
+        )
+
+    def generate(self,prompt: str,) -> str:
+
+        response = (
+            self.client.models.generate_content(
+                model=self.MODEL_NAME,
+                contents=prompt,
+            )
+        )
+
+        return response.text

@@ -1,6 +1,8 @@
 from app.services.retrieval_service import RetrievalService
 from app.services.generation_service import GenerationService
 
+import time
+
 
 class QuestionAnswerService:
 
@@ -12,6 +14,8 @@ class QuestionAnswerService:
 
     def answer(self,db,question: str):
 
+        start = time.time()
+
         retrieved_chunks = (
             self.retrieval_service.retrieve(
                 db=db,
@@ -19,11 +23,13 @@ class QuestionAnswerService:
                 top_k=3,
             )
         )
+        print("Retrieval time", time.time()- start)
 
         context = "\n\n".join(
             result["chunk"].content
             for result in retrieved_chunks
         )
+        start = time.time()
 
         answer = (
             self.generation_service.answer_question(
@@ -31,5 +37,16 @@ class QuestionAnswerService:
                 context=context,
             )
         )
+        print("Retrieval time", time.time()- start)
 
-        return {"answer": answer}
+        return {
+            "answer": answer,
+            "sources":[
+                 {
+                "chunk_id": item["chunk"].id,
+                "score": item["score"]
+        }
+        for item in retrieved_chunks
+            ]
+                
+                }
