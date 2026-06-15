@@ -40,3 +40,13 @@ class EvaluationResult(Base):
         DateTime,
         default=datetime.utcnow,
     )
+
+    answer_relevancy = Column(
+        Float,
+        nullable=True 
+    )
+
+    faithfulness = Column(
+        Float,
+        nullable=True
+    )

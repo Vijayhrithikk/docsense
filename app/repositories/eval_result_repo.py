@@ -10,12 +10,17 @@ def create_evaluation_result(
     total_cases: int,
     passed_cases: int,
     recall_at_3: float,
+    answer_relevancy: float,
+    faithfulness: float
+
 ):
 
     result = EvaluationResult(
         total_cases=total_cases,
         passed_cases=passed_cases,
         recall_at_3=recall_at_3,
+        answer_relevancy=answer_relevancy,
+        faithfulness=faithfulness
     )
 
     db.add(result)

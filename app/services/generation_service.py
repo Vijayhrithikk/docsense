@@ -9,6 +9,10 @@ class GenerationService:
 
         self.llm_service = LLMService()
 
+    def generate(self,prompt: str):
+
+        return (self.llm_service.generate(prompt))
+
     def answer_question(self,question: str,context: str):
 
         prompt = f"""
@@ -31,4 +35,4 @@ Question:
 Answer:
 """
 
-        return (self.llm_service.generate(prompt))
+        return self.generate(prompt)

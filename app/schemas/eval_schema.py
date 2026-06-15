@@ -54,6 +54,10 @@ class EvaluationRunResponse(
 
     recall_at_3: float
 
+    relevancy: float
+
+    faithfulness: float
+
     results: list[EvaluationCaseResult]
 
 
@@ -71,6 +75,10 @@ class EvaluationResultResponse(BaseModel):
     recall_at_3: float
 
     created_at: datetime
+
+    answer_relevancy: float | None
+
+    faithfulness: float | None
 
     class Config:
 
