@@ -1,44 +1,54 @@
-from sentence_transformers import SentenceTransformer
+from app.services.llm_service import LLMService
 
 from app.models.chunk_embedding_model import (
     ChunkEmbedding,
 )
+import time
 
 from app.repositories.chunk_embedding_repo import (
     get_latest_embedding,
     bulk_create_embeddings,
 )
-
+from google.genai.errors import ServerError
 
 class EmbeddingService:
 
-    MODEL_NAME = (
-        "sentence-transformers/all-MiniLM-L6-v2"
-    )
-
-    _model = None
+    MODEL_NAME = "gemini-embedding-2"
 
     def __init__(self):
 
-        if EmbeddingService._model is None:
+        self.client = LLMService().client
 
-            print("Loading embedding model...")
+    def generate_embedding(self,text: str) -> list[float]:
 
-            EmbeddingService._model = (SentenceTransformer(self.MODEL_NAME))
+        max_retries = 5
 
-        self.model = EmbeddingService._model
+        for attempt in range(max_retries):
 
-    def generate_embedding(
-        self,
-        text: str,
-    ) -> list[float]:
+            try:
 
-        embedding = self.model.encode(
-            text,
-            convert_to_numpy=True,
-        )
+                response = (
+                    self.client.models.embed_content(
+                        model=self.MODEL_NAME,
+                        contents=text,
+                    )
+                )
 
-        return embedding.tolist()
+                return response.embeddings[0].values
+
+            except ServerError as e:
+
+                if attempt == max_retries - 1:
+                    raise
+
+                wait_time = 2 ** attempt
+
+                print(
+                    f"Gemini unavailable. "
+                    f"Retrying in {wait_time}s..."
+                )
+
+                time.sleep(wait_time)
 
     def ensure_embedding_exist(
         self,
@@ -59,10 +69,8 @@ class EmbeddingService:
             if existing:
                 continue
 
-            embedding = (
-                self.generate_embedding(
-                    chunk.content
-                )
+            embedding = self.generate_embedding(
+                chunk.content
             )
 
             embeddings_to_create.append(

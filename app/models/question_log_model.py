@@ -3,19 +3,18 @@ from datetime import datetime
 from sqlalchemy import (
     Column,
     Integer,
-    String,
+    Text,
     DateTime,
+    Float,
     ForeignKey,
 )
-
-from sqlalchemy.orm import relationship
 
 from app.db.database import Base
 
 
-class Document(Base):
+class QuestionLog(Base):
 
-    __tablename__ = "documents"
+    __tablename__ = "question_logs"
 
     id = Column(
         Integer,
@@ -29,20 +28,24 @@ class Document(Base):
         nullable=False,
     )
 
-    title = Column(
-        String,
+    question = Column(
+        Text,
         nullable=False,
     )
 
-    file_path = Column(
-        String,
+    answer = Column(
+        Text,
         nullable=False,
     )
 
-    status = Column(
-        String,
+    retrieval_ms = Column(
+        Float,
         nullable=False,
-        default="uploaded",
+    )
+
+    generation_ms = Column(
+        Float,
+        nullable=False,
     )
 
     created_at = Column(
@@ -50,17 +53,17 @@ class Document(Base):
         default=datetime.utcnow,
     )
 
-    tenant = relationship(
-        "Tenant",
-        backref="documents",
+    top_score = Column(
+        Float,
+        nullable=True,
     )
 
-    chunks = relationship(
-        "Chunk",
-        back_populates="document"
+    chunk_count = Column(
+        Integer,
+        nullable=True,
     )
 
-    error_message = Column(
-        String,
+    context_length = Column(
+        Integer,
         nullable=True,
     )

@@ -19,7 +19,9 @@ def run(db: Session = Depends(get_db)):
 
     response = service.answer(
         db,
-        "How claude skill works",
+        tenant_id=1,
+
+        question="How claude skill works",
     )
 
     return response

@@ -73,7 +73,7 @@ def process_document(document_id: int):
 
         #temporary
 
-        embed_service.ensure_embedding_exist(db=db,chunks=chunks)
+        embed_service.ensure_embedding_exist(db=db,chunks=records)
 
         update_document_status(db=db,document_id=document_id,status="indexed")
 

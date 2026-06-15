@@ -5,7 +5,7 @@ from app.core.config import settings
 
 class LLMService:
 
-    MODEL_NAME = "gemini-2.5-flash"
+    MODEL_NAME = "gemini-2.5-pro"
 
     def __init__(self):
 

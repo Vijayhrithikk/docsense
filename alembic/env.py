@@ -1,11 +1,14 @@
 from logging.config import fileConfig
 from app.db.database import Base
 
-from app.models.document_model import Document
 from app.models.tenant_model import Tenant
+from app.models.document_model import Document
 from app.models.document_page_model import DocumentPage
 from app.models.chunk_model import Chunk
 from app.models.chunk_embedding_model import ChunkEmbedding
+from app.models.question_log_model import QuestionLog
+from app.models.evaluation_dataset_model import EvaluationDataset
+from app.models.eval_result_model import EvaluationResult
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

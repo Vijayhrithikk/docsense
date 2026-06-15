@@ -41,4 +41,9 @@ class Chunk(Base):
         nullable=False
     )
 
+    document = relationship(
+        "Document",
+        back_populates="chunks",
+    )
+
     
