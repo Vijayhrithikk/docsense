@@ -1,0 +1,58 @@
+name: Publish Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REGISTRY: 386346184524.dkr.ecr.ap-south-1.amazonaws.com
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Backend
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/docsense-backend:latest \
+            -t $ECR_REGISTRY/docsense-backend:${{ github.sha }} \
+            ./backend
+
+      - name: Push Backend
+        run: |
+          docker push $ECR_REGISTRY/docsense-backend:latest
+          docker push $ECR_REGISTRY/docsense-backend:${{ github.sha }}
+
+      - name: Build Frontend
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/docsense-frontend:latest \
+            -t $ECR_REGISTRY/docsense-frontend:${{ github.sha }} \
+            ./frontend
+
+      - name: Push Frontend
+        run: |
+          docker push $ECR_REGISTRY/docsense-frontend:latest
+          docker push $ECR_REGISTRY/docsense-frontend:${{ github.sha }}
