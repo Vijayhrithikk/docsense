@@ -1,0 +1,56 @@
+services:
+
+  postgres:
+    image: postgres:17
+
+    container_name: docsense-postgres
+
+    environment:
+      POSTGRES_DB: docsense
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+  backend:
+
+    image: 386346184524.dkr.ecr.ap-south-1.amazonaws.com/docsense-backend:latest
+
+    container_name: docsense-backend
+
+    depends_on:
+      - postgres
+
+    environment:
+      DATABASE_URL: postgresql://admin:${POSTGRES_PASSWORD}@postgres:5432/docsense
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      UPLOAD_DIR: /app/uploads
+
+    volumes:
+      - uploads_data:/app/uploads
+
+    ports:
+      - "8000:8000"
+
+    restart: unless-stopped
+
+  frontend:
+
+    image: 386346184524.dkr.ecr.ap-south-1.amazonaws.com/docsense-frontend:latest
+
+    container_name: docsense-frontend
+
+    depends_on:
+      - backend
+
+    ports:
+      - "80:80"
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  uploads_data:
