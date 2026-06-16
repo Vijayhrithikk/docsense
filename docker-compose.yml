@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+
+  backend:
+
+    build:
+      context: ./backend
+
+    container_name: docsense-backend
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DATABASE_URL: postgresql://admin:admin@host.docker.internal:5434/docsense
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      UPLOAD_DIR: uploads
+
+    restart: unless-stopped
+
+
+  frontend:
+
+    build:
+      context: ./frontend
+
+    container_name: docsense-frontend
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped

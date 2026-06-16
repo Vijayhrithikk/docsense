@@ -10,9 +10,21 @@ from app.api.eval_router import (
 from app.api.analytics_router import router as analytics_router
 from app.api.health_router import router as health_router
 from app.api.metrics_router import router as metrics_router
+from fastapi.middleware.cors import CORSMiddleware
+
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(tenant_router)
 app.include_router(document_router)

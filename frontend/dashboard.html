@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>DocSense Dashboard</title>
+
+  <link
+    rel="stylesheet"
+    href="css/styles.css"
+  />
+
+  <script
+    src="js/api.js"
+  ></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      DocSense
+    </div>
+
+    <div class="logo-subtitle">
+      Multi-Tenant RAG Platform
+    </div>
+
+    <nav class="nav">
+      <a
+        class="active"
+        href="dashboard.html"
+      >
+        Dashboard
+      </a>
+
+      <a href="tenants.html">
+        Tenants
+      </a>
+
+      <a href="upload.html">
+        Upload
+      </a>
+
+      <a href="ask.html">
+        Ask Question
+      </a>
+
+      <a href="history.html">
+        History
+      </a>
+
+      <a href="evaluation.html">
+        Evaluation
+      </a>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <h1 class="page-title">
+      Dashboard
+    </h1>
+
+    <div
+      class="grid grid-4"
+    >
+
+      <div class="card">
+        <div class="card-title">
+          Documents
+        </div>
+
+        <div
+          id="documents"
+          class="card-value"
+        >
+          -
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Chunks
+        </div>
+
+        <div
+          id="chunks"
+          class="card-value"
+        >
+          -
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Questions
+        </div>
+
+        <div
+          id="questions"
+          class="card-value"
+        >
+          -
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Evaluations
+        </div>
+
+        <div
+          id="evaluations"
+          class="card-value"
+        >
+          -
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section">
+
+      <div
+        class="grid grid-3"
+      >
+
+        <div class="card">
+          <div class="card-title">
+            Latest Recall
+          </div>
+
+          <div
+            id="latestRecall"
+            class="card-value"
+          >
+            -
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Best Recall
+          </div>
+
+          <div
+            id="bestRecall"
+            class="card-value"
+          >
+            -
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Avg Recall
+          </div>
+
+          <div
+            id="avgRecall"
+            class="card-value"
+          >
+            -
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="section">
+
+      <div
+        class="grid grid-3"
+      >
+
+        <div class="card">
+          <div class="card-title">
+            Avg Retrieval
+          </div>
+
+          <div
+            id="retrieval"
+            class="card-value"
+          >
+            -
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Avg Generation
+          </div>
+
+          <div
+            id="generation"
+            class="card-value"
+          >
+            -
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Avg Top Score
+          </div>
+
+          <div
+            id="topScore"
+            class="card-value"
+          >
+            -
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+async function loadDashboard() {
+
+  try {
+
+    const metrics =
+      await apiGet(
+        "/metrics"
+      );
+
+    document.getElementById(
+      "documents"
+    ).innerText =
+      metrics.documents;
+
+    document.getElementById(
+      "chunks"
+    ).innerText =
+      metrics.chunks;
+
+    document.getElementById(
+      "questions"
+    ).innerText =
+      metrics.questions;
+
+    document.getElementById(
+      "evaluations"
+    ).innerText =
+      metrics.evaluations;
+
+    const evaluation =
+      await apiGet(
+        "/evaluation/summary"
+      );
+
+    document.getElementById(
+      "latestRecall"
+    ).innerText =
+      evaluation.latest_recall;
+
+    document.getElementById(
+      "bestRecall"
+    ).innerText =
+      evaluation.best_recall;
+
+    document.getElementById(
+      "avgRecall"
+    ).innerText =
+      evaluation.avg_recall;
+
+    const analytics =
+      await apiGet(
+        "/analytics/summary?tenant_id=1"
+      );
+
+    document.getElementById(
+      "retrieval"
+    ).innerText =
+      analytics.avg_retrieval_ms;
+
+    document.getElementById(
+      "generation"
+    ).innerText =
+      analytics.avg_generation_ms;
+
+    document.getElementById(
+      "topScore"
+    ).innerText =
+      analytics.avg_top_score;
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+}
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>

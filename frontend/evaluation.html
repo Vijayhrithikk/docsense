@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>DocSense Evaluation</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="js/api.js"></script>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      DocSense
+    </div>
+
+    <div class="logo-subtitle">
+      Multi-Tenant RAG Platform
+    </div>
+
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="tenants.html">Tenants</a>
+      <a href="upload.html">Upload</a>
+      <a href="ask.html">Ask Question</a>
+      <a href="history.html">History</a>
+      <a class="active" href="evaluation.html">
+        Evaluation
+      </a>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <h1 class="page-title">
+      Evaluation Dashboard
+    </h1>
+
+    <div class="card">
+
+      <button
+        onclick="runEvaluation()"
+      >
+        Run Evaluation
+      </button>
+
+      <div
+        id="evalStatus"
+        style="margin-top:20px;"
+      ></div>
+
+    </div>
+
+    <div class="section">
+
+      <div class="grid grid-4">
+
+        <div class="card">
+
+          <div class="card-title">
+            Recall@3
+          </div>
+
+          <div
+            id="recall"
+            class="card-value"
+          >
+            -
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <div class="card-title">
+            Relevancy
+          </div>
+
+          <div
+            id="relevancy"
+            class="card-value"
+          >
+            -
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <div class="card-title">
+            Faithfulness
+          </div>
+
+          <div
+            id="faithfulness"
+            class="card-value"
+          >
+            -
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <div class="card-title">
+            Passed
+          </div>
+
+          <div
+            id="passed"
+            class="card-value"
+          >
+            -
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="section">
+
+      <div class="card">
+
+        <h3>
+          Previous Runs
+        </h3>
+
+        <table class="table">
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Recall</th>
+              <th>Relevancy</th>
+              <th>Faithfulness</th>
+              <th>Created</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="resultsTable">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+async function runEvaluation() {
+
+  try {
+
+    document.getElementById(
+      "evalStatus"
+    ).innerHTML =
+      `<div class="loading">
+        Running evaluation...
+      </div>`;
+
+    const result =
+      await apiPost(
+        "/evaluation/run",
+        {}
+      );
+
+    document.getElementById(
+      "recall"
+    ).innerText =
+      result.recall_at_3.toFixed(2);
+
+    document.getElementById(
+      "relevancy"
+    ).innerText =
+      result.relevancy.toFixed(2);
+
+    document.getElementById(
+      "faithfulness"
+    ).innerText =
+      result.faithfulness.toFixed(2);
+
+    document.getElementById(
+      "passed"
+    ).innerText =
+      `${result.passed_cases}/${result.total_cases}`;
+
+    document.getElementById(
+      "evalStatus"
+    ).innerHTML =
+      `<div class="success">
+        Evaluation Complete
+      </div>`;
+
+    loadResults();
+
+  } catch(error) {
+
+    console.error(error);
+
+  }
+
+}
+
+async function loadResults() {
+
+  try {
+
+    const results =
+      await apiGet(
+        "/evaluation/results"
+      );
+
+    const table =
+      document.getElementById(
+        "resultsTable"
+      );
+
+    table.innerHTML = "";
+
+    results.forEach(result => {
+
+      table.innerHTML += `
+        <tr>
+
+          <td>
+            ${result.id}
+          </td>
+
+          <td>
+            ${result.recall_at_3.toFixed(2)}
+          </td>
+
+          <td>
+            ${
+              result.answer_relevancy
+              ?.toFixed(2) ?? "-"
+            }
+          </td>
+
+          <td>
+            ${
+              result.faithfulness
+              ?.toFixed(2) ?? "-"
+            }
+          </td>
+
+          <td>
+            ${new Date(
+              result.created_at
+            ).toLocaleString()}
+          </td>
+
+        </tr>
+      `;
+
+    });
+
+  } catch(error) {
+
+    console.error(error);
+
+  }
+
+}
+
+loadResults();
+
+</script>
+
+</body>
+</html>

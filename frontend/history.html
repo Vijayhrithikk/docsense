@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>DocSense History</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="js/api.js"></script>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      DocSense
+    </div>
+
+    <div class="logo-subtitle">
+      Multi-Tenant RAG Platform
+    </div>
+
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="tenants.html">Tenants</a>
+      <a href="upload.html">Upload</a>
+      <a href="ask.html">Ask Question</a>
+      <a class="active" href="history.html">History</a>
+      <a href="evaluation.html">Evaluation</a>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <h1 class="page-title">
+      Question History
+    </h1>
+
+    <div class="card">
+
+      <label>
+        Tenant ID
+      </label>
+
+      <input
+        id="tenantId"
+        type="number"
+        value="1"
+      >
+
+      <button onclick="loadHistory()">
+        Load History
+      </button>
+
+    </div>
+
+    <div class="section">
+
+      <table class="table">
+
+        <thead>
+
+          <tr>
+            <th>ID</th>
+            <th>Question</th>
+            <th>Retrieval</th>
+            <th>Generation</th>
+            <th>Created</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="historyTable">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+async function loadHistory() {
+
+  try {
+
+    const tenantId =
+      document.getElementById(
+        "tenantId"
+      ).value;
+
+    const history =
+      await apiGet(
+        `/questions/history/${tenantId}`
+      );
+
+    const table =
+      document.getElementById(
+        "historyTable"
+      );
+
+    table.innerHTML = "";
+
+    history.forEach(item => {
+
+      table.innerHTML += `
+        <tr>
+
+          <td>
+            ${item.id}
+          </td>
+
+          <td>
+            ${item.question}
+          </td>
+
+          <td>
+            ${item.retrieval_ms.toFixed(2)} ms
+          </td>
+
+          <td>
+            ${item.generation_ms.toFixed(2)} ms
+          </td>
+
+          <td>
+            ${new Date(
+              item.created_at
+            ).toLocaleString()}
+          </td>
+
+        </tr>
+      `;
+
+    });
+
+  } catch(error) {
+
+    console.error(error);
+
+  }
+
+}
+
+loadHistory();
+
+</script>
+
+</body>
+</html>

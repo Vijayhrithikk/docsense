@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>DocSense - Tenants</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/api.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">DocSense</div>
+
+    <div class="logo-subtitle">
+      Multi-Tenant RAG Platform
+    </div>
+
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a class="active" href="tenants.html">Tenants</a>
+      <a href="upload.html">Upload</a>
+      <a href="ask.html">Ask Question</a>
+      <a href="history.html">History</a>
+      <a href="evaluation.html">Evaluation</a>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <h1 class="page-title">
+      Tenant Management
+    </h1>
+
+    <div class="card">
+
+      <h3>Create Tenant</h3>
+
+      <input
+        id="tenantName"
+        placeholder="Tenant Name"
+      />
+
+      <button onclick="createTenant()">
+        Create Tenant
+      </button>
+
+      <div id="status"></div>
+
+    </div>
+
+    <div class="section">
+
+      <div class="card">
+
+        <h3>Existing Tenants</h3>
+
+        <table class="table">
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+
+          <tbody id="tenantTable">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+async function loadTenants() {
+
+  const tenants =
+    await apiGet("/tenants");
+
+  const table =
+    document.getElementById(
+      "tenantTable"
+    );
+
+  table.innerHTML = "";
+
+  tenants.forEach(tenant => {
+
+    table.innerHTML += `
+      <tr>
+        <td>${tenant.id}</td>
+        <td>${tenant.name}</td>
+      </tr>
+    `;
+
+  });
+
+}
+
+async function createTenant() {
+
+  try {
+
+    const name =
+      document.getElementById(
+        "tenantName"
+      ).value;
+
+    await apiPost(
+      "/tenants",
+      {
+        name
+      }
+    );
+
+    document.getElementById(
+      "status"
+    ).innerHTML =
+      `<div class="success">
+        Tenant Created
+      </div>`;
+
+    document.getElementById(
+      "tenantName"
+    ).value = "";
+
+    loadTenants();
+
+  } catch {
+
+    document.getElementById(
+      "status"
+    ).innerHTML =
+      `<div class="error">
+        Failed
+      </div>`;
+  }
+
+}
+
+loadTenants();
+
+</script>
+
+</body>
+</html>

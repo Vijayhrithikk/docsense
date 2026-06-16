@@ -115,3 +115,16 @@ Deploy DocSense as a production-ready SaaS platform with:
 * Analytics
 * CI/CD
 * Cloud Infrastructure
+
+Milestone:
+Successfully containerized FastAPI application.
+
+Image Size:
+~902 MB
+
+Lessons:
+- Removed unnecessary dependencies.
+- Replaced psycopg2 with psycopg2-binary.
+- Removed legacy genai package.
+- Learned container environment variables.
+- Learned Docker networking fundamentals.

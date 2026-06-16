@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>DocSense Ask</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="js/api.js"></script>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      DocSense
+    </div>
+
+    <div class="logo-subtitle">
+      Multi-Tenant RAG Platform
+    </div>
+
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="tenants.html">Tenants</a>
+      <a href="upload.html">Upload</a>
+      <a class="active" href="ask.html">Ask Question</a>
+      <a href="history.html">History</a>
+      <a href="evaluation.html">Evaluation</a>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <h1 class="page-title">
+      Ask Question
+    </h1>
+
+    <div class="card">
+
+      <label>
+        Tenant ID
+      </label>
+
+      <input
+        id="tenantId"
+        type="number"
+        value="1"
+      >
+
+      <textarea
+        id="question"
+        rows="6"
+        placeholder="Ask a question about uploaded documents..."
+      ></textarea>
+
+      <button
+        onclick="askQuestion()"
+      >
+        Ask
+      </button>
+
+      <div id="loading"></div>
+
+    </div>
+
+    <div
+      id="answerContainer"
+      class="answer-box"
+      style="display:none;"
+    >
+
+      <h3>
+        Answer
+      </h3>
+
+      <p id="answer"></p>
+
+    </div>
+
+    <div
+      id="sources"
+      class="section"
+    ></div>
+
+  </main>
+
+</div>
+
+<script>
+
+async function askQuestion() {
+
+  try {
+
+    document.getElementById(
+      "loading"
+    ).innerHTML =
+      `<div class="loading">
+        Thinking...
+      </div>`;
+
+    const response =
+      await apiPost(
+        "/questions/ask",
+        {
+          tenant_id:
+            Number(
+              document.getElementById(
+                "tenantId"
+              ).value
+            ),
+
+          question:
+            document.getElementById(
+              "question"
+            ).value
+        }
+      );
+
+    document.getElementById(
+      "answerContainer"
+    ).style.display =
+      "block";
+
+    document.getElementById(
+      "answer"
+    ).innerText =
+      response.answer;
+
+    const sourceDiv =
+      document.getElementById(
+        "sources"
+      );
+
+    sourceDiv.innerHTML =
+      "<h3>Sources</h3>";
+
+    response.sources.forEach(
+      source => {
+
+      sourceDiv.innerHTML += `
+        <div class="source-card">
+
+          <strong>
+            ${source.document_title}
+          </strong>
+
+          <br>
+
+          Pages:
+          ${source.start_page}
+          -
+          ${source.end_page}
+
+          <br>
+
+          Score:
+          ${source.score.toFixed(4)}
+
+        </div>
+      `;
+
+    });
+
+    document.getElementById(
+      "loading"
+    ).innerHTML = "";
+
+  } catch {
+
+    document.getElementById(
+      "loading"
+    ).innerHTML =
+      `<div class="error">
+        Failed
+      </div>`;
+  }
+
+}
+
+</script>
+
+</body>
+</html>

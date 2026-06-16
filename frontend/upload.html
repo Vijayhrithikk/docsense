@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>DocSense Upload</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="js/api.js"></script>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">DocSense</div>
+
+    <div class="logo-subtitle">
+      Multi-Tenant RAG Platform
+    </div>
+
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="tenants.html">Tenants</a>
+      <a class="active" href="upload.html">Upload</a>
+      <a href="ask.html">Ask Question</a>
+      <a href="history.html">History</a>
+      <a href="evaluation.html">Evaluation</a>
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <h1 class="page-title">
+      Upload Document
+    </h1>
+
+    <div class="card">
+
+      <label>
+        Tenant ID
+      </label>
+
+      <input
+        id="tenantId"
+        type="number"
+        value="1"
+      >
+
+      <label>
+        Title
+      </label>
+
+      <input
+        id="title"
+        placeholder="Document Title"
+      >
+
+      <label>
+        PDF
+      </label>
+
+      <input
+        id="file"
+        type="file"
+      >
+
+      <button
+        onclick="uploadDocument()"
+      >
+        Upload
+      </button>
+
+      <div id="uploadStatus"></div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+async function uploadDocument() {
+
+  try {
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "tenant_id",
+      document.getElementById(
+        "tenantId"
+      ).value
+    );
+
+    formData.append(
+      "title",
+      document.getElementById(
+        "title"
+      ).value
+    );
+
+    formData.append(
+      "file",
+      document.getElementById(
+        "file"
+      ).files[0]
+    );
+
+    document.getElementById(
+      "uploadStatus"
+    ).innerHTML =
+      `<div class="loading">
+        Uploading...
+      </div>`;
+
+    await apiUpload(
+      "/documents",
+      formData
+    );
+
+    document.getElementById(
+      "uploadStatus"
+    ).innerHTML =
+      `<div class="success">
+        Upload Successful
+      </div>`;
+
+  } catch {
+
+    document.getElementById(
+      "uploadStatus"
+    ).innerHTML =
+      `<div class="error">
+        Upload Failed
+      </div>`;
+  }
+
+}
+
+</script>
+
+</body>
+</html>
