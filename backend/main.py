@@ -20,7 +20,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:8080",
-        "http://13.203.79.112"
+        "http://13.204.63.146"
     ],
     allow_credentials=True,
     allow_methods=["*"],
