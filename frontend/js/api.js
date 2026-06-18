@@ -1,4 +1,4 @@
-const API_URL = "http://13.203.79.112:8000";
+const API_URL = "http://13.204.63.146:8000";
 
 async function apiGet(endpoint) {
   const response = await fetch(
